@@ -15,3 +15,14 @@ https://developer.chrome.com/apps/fileSystem
 3. https://developer.chrome.com/extensions/devguide
 
 4. https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition
+
+5. Permissions:
+https://developer.chrome.com/extensions/declare_permissions
+
+
+
+### TO DO
+
+1. Zrób ładną stronę w której prosisz o pozwolenie na wykorzystanie mikrofonu
+2. Obsłuż lepiej błędy (żeby nie otwierały za każdym razem tej strony, tylko wtedy gdy not-allowed)
+3. Zrób mapkę do przetwarzania tekstu

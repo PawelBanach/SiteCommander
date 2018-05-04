@@ -2,27 +2,27 @@
     "name": "Site Commander",
     "description" : "Speech recognition tool used to navigate through website",
     "version": "1.0",
+    "icons": {
+      "128":"icon.png"
+    },
     "manifest_version": 2,
     "browser_action": {
       "default_popup": "popup.html",
       "default_icon": "icon.png",
       "default title": "Open Chrome Site Commander interface"
     },
+    "background": {
+      "scripts": ["background.js"],
+      "persistent": true
+    },
     "commands": {
-//      "start": {
-//        "suggested_key": {
-//          "default": "Ctrl+Shift+S",
-//          "mac": "Command+Shift+U"
-//        },
-//        "description": "Start Capture"
-//      },
       "record": {
         "suggested_key": {
-          "default": "Ctrl+Shift+D",
-          "mac": "Command+Shift+D"
+          "default": "Ctrl+Shift+B",
+          "mac": "Command+Shift+B"
         },
         "description": "Record"
       }
-    }
-  
+    },
+    "permissions": ["tabs", "storage", "pageCapture"]
   }
