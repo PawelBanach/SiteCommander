@@ -13,11 +13,15 @@ recognition.lang = 'pl-PL';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
+let currentResult = null;
+
 
 recognition.onresult = (e) => {
   const result = e.results[e.results.length - 1][0].transcript;
   console.log('result: ', result);
-  updateResult(result);
+  console.log(result);
+  currentResult = result;
+
 }
 
 recognition.onerror = (e) => {
@@ -27,6 +31,24 @@ recognition.onerror = (e) => {
 
 recognition.onend = () => {
   console.log('recognition end.');
+
+  chrome.tabs.executeScript(null, {
+    code: "currentResult = \"" + currentResult + "\""
+  }, function() {
+    chrome.tabs.executeScript(null, {
+      file: "makeAction.js"
+    }, result => {
+      const lastErr = chrome.runtime.lastError;
+      if (lastErr) console.log(' lastError: ' + JSON.stringify(lastErr));
+    })
+  })
+
+
+  // const firstFoundElement = Array.from(document.getElementsByClassName('title')).filter(element => element.innerText.toLowerCase().includes(currentResult))[0];
+  // if (firstFoundElement) {
+    // console.log(firstFoundElement);
+    // firstFoundElement.click();
+  // }
 }
 
 const startCapture = function() {
@@ -62,7 +84,10 @@ const startCapture = function() {
 // });
 };
 
+console.log("executing background");
+
 chrome.commands.onCommand.addListener((command) => {
+  console.log(command);
   if (command === "record") {
     startCapture();
   }
