@@ -52,11 +52,11 @@ recognition.onend = (e) => {
       });
       console.log("WPISZ");
       break;
-    case ((command.match(/wybierz/)) || (command.match(/select/))):
+    case (/wybierz/.test(command) || /select/.test(command)):
       chrome.tabs.executeScript({ file: "commands/select.js" });
       console.log("WYBIERZ");
       break;
-    case (command.match(/szukaj/)):
+    case (/szukaj/.test(command) || /find/.test(command)):
       chrome.tabs.executeScript({
         code: 'let text = ' + JSON.stringify(words.slice(1))
       }, function() {
@@ -64,23 +64,23 @@ recognition.onend = (e) => {
       });
       console.log("SZUKAJ");
       break;
-    case (command.match(/cofnij/)):
+    case (/cofnij/.test(command) || /back/.test(command)):
       chrome.tabs.executeScript({ file: "commands/back.js" });
       console.log("COFNIJ");
       break;
-    case (command.match(/naprzód/)):
+    case (/naprzód/.test(command) || /forward/.test(command)):
       chrome.tabs.executeScript({ file: "commands/forward.js" });
       console.log("NAPRZÓD");
       break;
-    case (command.match(/google/)):
+    case (/google/.test(command)):
       chrome.tabs.executeScript({ file: "commands/google.js" });
       console.log("GOOGLE");
       break;
-    case (command.match(/dół/)):
+    case (/dół/.test(command) || /down/.test(command)):
       chrome.tabs.executeScript({ file: "commands/down.js" });
       console.log("DÓŁ");
       break;
-    case (command.match(/góra/)):
+    case (/góra/.test(command) || /up/.test(command)):
       chrome.tabs.executeScript({ file: "commands/up.js" });
       console.log("GÓRA");
       break;
@@ -108,7 +108,7 @@ recognition.onend = (e) => {
     // console.log(firstFoundElement);
     // firstFoundElement.click();
   // }
-}
+};
 
 const startCapture = function() {
   recording = !recording;
@@ -117,30 +117,7 @@ const startCapture = function() {
     recognition.start();
   } else {
     console.log("Stop recording")
-  }//   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-//     // CODE TO BLOCK CAPTURE ON YOUTUBE, DO NOT REMOVE
-//     // if(tabs[0].url.toLowerCase().includes("youtube")) {
-//     //   chrome.tabs.create({url: "error.html"});
-//     // } else {
-//     if(!sessionStorage.getItem(tabs[0].id)) {
-//     sessionStorage.setItem(tabs[0].id, Date.now());
-//     chrome.storage.sync.get({
-//       maxTime: 1200000,
-//       muteTab: false,
-//       format: "mp3",
-//       quality: 192,
-//       limitRemoved: false
-//     }, (options) => {
-//       let time = options.maxTime;
-//     if(time > 1200000) {
-//       time = 1200000
-//     }
-//     audioCapture(time, options.muteTab, options.format, options.quality, options.limitRemoved);
-//   });
-//     chrome.runtime.sendMessage({captureStarted: tabs[0].id, startTime: Date.now()});
-//   }
-//   // }
-// });
+  }
 };
 
 console.log("executing background");

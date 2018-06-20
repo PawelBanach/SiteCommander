@@ -1,1 +1,2 @@
-// todo: scroll down
+// scroll down
+window.scrollBy(0, 600);
