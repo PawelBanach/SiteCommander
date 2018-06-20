@@ -24,5 +24,5 @@
         "description": "Record"
       }
     },
-    "permissions": ["tabs", "<all_urls>", "https://*/*", "*://*/*", "https://www.onet.pl/*", "https://www.onet.pl/", "storage", "pageCapture"]
+    "permissions": ["tabs", "<all_urls>", "https://*/*", "*://*/*", "https://www.thetimes.co.uk/*", "https://www.thetimes.co.uk/", "storage", "pageCapture"]
   }

@@ -7,8 +7,8 @@ let recording = false;
 var recognition = new SpeechRecognition();
 var speechRecognitionList = new SpeechGrammarList();
 
-// recognition.lang = 'en-US';
-recognition.lang = 'pl-PL';
+recognition.lang = 'en-US';
+// recognition.lang = 'pl-PL';
 // recognition.continuous = false;
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
@@ -44,7 +44,7 @@ recognition.onend = () => {
   })
 
 
-  // const firstFoundElement = Array.from(document.getElementsByClassName('title')).filter(element => element.innerText.toLowerCase().includes(currentResult))[0];
+  // const firstFoundElement = Array.from(document.getElementsByClassName('Item-headline')).filter(element => element.innerText.toLowerCase().includes(currentResult))[0];
   // if (firstFoundElement) {
     // console.log(firstFoundElement);
     // firstFoundElement.click();
