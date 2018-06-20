@@ -16,11 +16,12 @@ if(document.getElementsByClassName("sc-focus").length !== 0) {
 
   //focus the following element
   var newFocus;
-  if(currentIndex !== 0) {
+  if (currentIndex !== 0) {
     newFocus = all[currentIndex - 1];
   } else {
     newFocus = all[all.length - 1];
   }
+
   newFocus.focus();
   newFocus.style.border = "red 2px solid";
   newFocus.className += " sc-focus";

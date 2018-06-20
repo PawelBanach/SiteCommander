@@ -5,8 +5,7 @@ if(focus) {
   focus.classList.remove("sc-focus");
 }
 
-
-var h1 = document.querySelectorAll('h1, input, button, a, area, object, select, textarea')[0];
+const h1 = document.querySelectorAll('h1, input, button, a, area, object, select, textarea')[0];
 h1.focus();
 h1.style.border = "red 2px solid";
 h1.className += " sc-focus";

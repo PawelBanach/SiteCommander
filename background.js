@@ -45,7 +45,7 @@ recognition.onend = (e) => {
       chrome.tabs.executeScript({ file: "commands/right.js" });
       console.log("Wywołanie: PRAWO/RIGHT");
       break;
-    case ((/wpisz/.test(command)) || (/write/.test(command))):
+    case ((/wpisz/.test(command)) || (/input/.test(command))):
       chrome.tabs.executeScript({
         code: 'text = ' + JSON.stringify(words.slice(1))
       }, function() {
