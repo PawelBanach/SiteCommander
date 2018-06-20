@@ -3,6 +3,7 @@ const SpeechGrammarList = webkitSpeechGrammarList;
 const SpeechRecognitionEvent = webkitSpeechRecognitionEvent;
 
 let recording = false;
+let text;
 
 var recognition = new SpeechRecognition();
 var speechRecognitionList = new SpeechGrammarList();
@@ -19,72 +20,88 @@ let currentResult = null;
 recognition.onresult = (e) => {
   const result = e.results[e.results.length - 1][0].transcript;
   console.log('result: ', result);
-  console.log(result);
   currentResult = result;
 
-}
+};
 
 recognition.onerror = (e) => {
   console.error(e);
   chrome.tabs.create({url: "permission.html"}, (data) => { console.log('Site created!') });
-}
+};
 
-recognition.onend = () => {
-  console.log('recognition end.');
-
-  chrome.tabs.executeScript(null, {
-    code: "currentResult = \"" + currentResult + "\""
-  }, function() {
-    chrome.tabs.executeScript(null, {
-      file: "makeAction.js"
-    }, result => {
-      const lastErr = chrome.runtime.lastError;
-      if (lastErr) console.log(' lastError: ' + JSON.stringify(lastErr));
-    })
-  })
-
-
-  // const firstFoundElement = Array.from(document.getElementsByClassName('Item-headline')).filter(element => element.innerText.toLowerCase().includes(currentResult))[0];
-  // if (firstFoundElement) {
-    // console.log(firstFoundElement);
-    // firstFoundElement.click();
-  // }
-}
+recognition.onend = (e) => {
+  const words = currentResult.split(" ");
+  const command = words[0].toLowerCase();
+  switch(true) {
+    case (/focus/.test(command)):
+      console.log("Wywołanie: FOCUS");
+      chrome.tabs.executeScript({ file: "commands/focus.js" });
+      break;
+    case ((/lewo/.test(command)) || (/left/.test(command))):
+      chrome.tabs.executeScript({ file: "commands/left.js" });
+      console.log("Wywołanie: LEWO/LEFT");
+      break;
+    case ((/prawo/.test(command)) || (/right/.test(command))):
+      chrome.tabs.executeScript({ file: "commands/right.js" });
+      console.log("Wywołanie: PRAWO/RIGHT");
+      break;
+    case ((/wpisz/.test(command)) || (/write/.test(command))):
+      chrome.tabs.executeScript({
+        code: 'text = ' + JSON.stringify(words.slice(1))
+      }, function() {
+        chrome.tabs.executeScript({ file: 'commands/write.js' });
+      });
+      console.log("Wywołanie: WPISZ/WRITE ARGUMENT1");
+      break;
+    case (/wybierz/.test(command) || /select/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/select.js" });
+      console.log("Wywołanie: WYBIERZ/SELECT");
+      break;
+    case (/szukaj/.test(command) || /find/.test(command)):
+      chrome.tabs.executeScript({
+        code: 'text = ' + JSON.stringify(words.slice(1))
+      }, function() {
+        chrome.tabs.executeScript({ file: 'commands/find.js' });
+      });
+      console.log("Wywołanie: SZUKAJ/FIND ARGUMENT 1");
+      break;
+    case (/cofnij/.test(command) || /back/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/back.js" });
+      console.log("Wywołanie: COFNIJ/BACK");
+      break;
+    case (/naprzód/.test(command) || /forward/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/forward.js" });
+      console.log("Wywołanie: NAPRZÓD/FORWARD");
+      break;
+    case (/google/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/google.js" });
+      console.log("Wywołanie: GOOGLE");
+      break;
+    case (/dół/.test(command) || /down/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/down.js" });
+      console.log("Wywołanie: DÓŁ/DOWN");
+      break;
+    case (/góra/.test(command) || /up/.test(command)):
+      chrome.tabs.executeScript({ file: "commands/up.js" });
+      console.log("Wywołanie: GÓRA/UP");
+      break;
+    default:
+      console.log("NIE ZROZUMIAŁEM KOMENDY");
+      break;
+  }
+  console.timeEnd('Time');
+};
 
 const startCapture = function() {
   recording = !recording;
   if (recording) {
-    console.log("Recording")
+    console.log("Recording");
+    console.time('Time');
     recognition.start();
   } else {
     console.log("Stop recording")
-  }//   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-//     // CODE TO BLOCK CAPTURE ON YOUTUBE, DO NOT REMOVE
-//     // if(tabs[0].url.toLowerCase().includes("youtube")) {
-//     //   chrome.tabs.create({url: "error.html"});
-//     // } else {
-//     if(!sessionStorage.getItem(tabs[0].id)) {
-//     sessionStorage.setItem(tabs[0].id, Date.now());
-//     chrome.storage.sync.get({
-//       maxTime: 1200000,
-//       muteTab: false,
-//       format: "mp3",
-//       quality: 192,
-//       limitRemoved: false
-//     }, (options) => {
-//       let time = options.maxTime;
-//     if(time > 1200000) {
-//       time = 1200000
-//     }
-//     audioCapture(time, options.muteTab, options.format, options.quality, options.limitRemoved);
-//   });
-//     chrome.runtime.sendMessage({captureStarted: tabs[0].id, startTime: Date.now()});
-//   }
-//   // }
-// });
+  }
 };
-
-console.log("executing background");
 
 chrome.commands.onCommand.addListener((command) => {
   console.log(command);
