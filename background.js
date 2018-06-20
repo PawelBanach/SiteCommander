@@ -19,29 +19,88 @@ let currentResult = null;
 recognition.onresult = (e) => {
   const result = e.results[e.results.length - 1][0].transcript;
   console.log('result: ', result);
-  console.log(result);
   currentResult = result;
 
-}
+};
 
 recognition.onerror = (e) => {
   console.error(e);
   chrome.tabs.create({url: "permission.html"}, (data) => { console.log('Site created!') });
-}
+};
 
-recognition.onend = () => {
-  console.log('recognition end.');
+recognition.onend = (e) => {
+  const words = currentResult.split(" ");
+  const command = words[0].toLowerCase();
+  switch(true) {
+    case (/focus/.test(command)):
+      console.log("FOCUS");
+      chrome.tabs.executeScript({ file: "commands/focus.js" });
+      break;
+    case ((/lewo/.test(command)) || (/left/.test(command))):
+      chrome.tabs.executeScript({ file: "commands/left.js" });
+      console.log("LEWO");
+      break;
+    case ((/prawo/.test(command)) || (/right/.test(command))):
+      chrome.tabs.executeScript({ file: "commands/right.js" });
+      console.log("PRAWO");
+      break;
+    case ((/wpisz/.test(command)) || (/write/.test(command))):
+      chrome.tabs.executeScript({
+        code: 'let text = ' + JSON.stringify(words.slice(1))
+      }, function() {
+        chrome.tabs.executeScript({ file: 'commands/write.js' });
+      });
+      console.log("WPISZ");
+      break;
+    case ((command.match(/wybierz/)) || (command.match(/select/))):
+      chrome.tabs.executeScript({ file: "commands/select.js" });
+      console.log("WYBIERZ");
+      break;
+    case (command.match(/szukaj/)):
+      chrome.tabs.executeScript({
+        code: 'let text = ' + JSON.stringify(words.slice(1))
+      }, function() {
+        chrome.tabs.executeScript({ file: 'commands/find.js' });
+      });
+      console.log("SZUKAJ");
+      break;
+    case (command.match(/cofnij/)):
+      chrome.tabs.executeScript({ file: "commands/back.js" });
+      console.log("COFNIJ");
+      break;
+    case (command.match(/naprzód/)):
+      chrome.tabs.executeScript({ file: "commands/forward.js" });
+      console.log("NAPRZÓD");
+      break;
+    case (command.match(/google/)):
+      chrome.tabs.executeScript({ file: "commands/google.js" });
+      console.log("GOOGLE");
+      break;
+    case (command.match(/dół/)):
+      chrome.tabs.executeScript({ file: "commands/down.js" });
+      console.log("DÓŁ");
+      break;
+    case (command.match(/góra/)):
+      chrome.tabs.executeScript({ file: "commands/up.js" });
+      console.log("GÓRA");
+      break;
+    default:
+      console.log("NIE ZROZUMIAŁEM KOMENDY");
+      break;
+  }
+  debugger;
 
-  chrome.tabs.executeScript(null, {
-    code: "currentResult = \"" + currentResult + "\""
-  }, function() {
-    chrome.tabs.executeScript(null, {
-      file: "makeAction.js"
-    }, result => {
-      const lastErr = chrome.runtime.lastError;
-      if (lastErr) console.log(' lastError: ' + JSON.stringify(lastErr));
-    })
-  })
+
+  // chrome.tabs.executeScript(null, {
+  //   code: "currentResult = \"" + currentResult + "\""
+  // }, function() {
+  //   chrome.tabs.executeScript(null, {
+  //     file: "makeAction.js"
+  //   }, result => {
+  //     const lastErr = chrome.runtime.lastError;
+  //     if (lastErr) console.log(' lastError: ' + JSON.stringify(lastErr));
+  //   })
+  // })
 
 
   // const firstFoundElement = Array.from(document.getElementsByClassName('title')).filter(element => element.innerText.toLowerCase().includes(currentResult))[0];
