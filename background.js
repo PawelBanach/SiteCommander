@@ -3,6 +3,7 @@ const SpeechGrammarList = webkitSpeechGrammarList;
 const SpeechRecognitionEvent = webkitSpeechRecognitionEvent;
 
 let recording = false;
+let text;
 
 var recognition = new SpeechRecognition();
 var speechRecognitionList = new SpeechGrammarList();
@@ -46,7 +47,7 @@ recognition.onend = (e) => {
       break;
     case ((/wpisz/.test(command)) || (/write/.test(command))):
       chrome.tabs.executeScript({
-        code: 'let text = ' + JSON.stringify(words.slice(1))
+        code: 'text = ' + JSON.stringify(words.slice(1))
       }, function() {
         chrome.tabs.executeScript({ file: 'commands/write.js' });
       });
@@ -58,7 +59,7 @@ recognition.onend = (e) => {
       break;
     case (/szukaj/.test(command) || /find/.test(command)):
       chrome.tabs.executeScript({
-        code: 'let text = ' + JSON.stringify(words.slice(1))
+        code: 'text = ' + JSON.stringify(words.slice(1))
       }, function() {
         chrome.tabs.executeScript({ file: 'commands/find.js' });
       });
@@ -88,8 +89,7 @@ recognition.onend = (e) => {
       console.log("NIE ZROZUMIAŁEM KOMENDY");
       break;
   }
-  debugger;
-
+  console.timeEnd('Time');
 
   // chrome.tabs.executeScript(null, {
   //   code: "currentResult = \"" + currentResult + "\""
@@ -113,7 +113,8 @@ recognition.onend = (e) => {
 const startCapture = function() {
   recording = !recording;
   if (recording) {
-    console.log("Recording")
+    console.log("Recording");
+    console.time('Time');
     recognition.start();
   } else {
     console.log("Stop recording")
